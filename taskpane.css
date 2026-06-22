@@ -35,6 +35,10 @@ body{font-family:"Segoe UI",system-ui,Arial,sans-serif;background:var(--bg);colo
 .chip .x{cursor:pointer;background:#0b1220;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
 .chip .x:hover{color:var(--red)}
 .chips .clr{margin-left:auto;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline}
+.grpbtn{border:1px solid var(--line);border-radius:7px;padding:6px 10px;cursor:pointer;font-size:12px;background:var(--panel);color:var(--muted)}
+.grpbtn.on{background:#3b2a5c;color:#ddd6fe;border-color:var(--violet);font-weight:600}
+.grpbtn.off{background:#3a1f2a;color:#fecaca;border-color:var(--red)}
+.gtag{display:inline-block;font-size:9px;background:#3b2a5c;color:#ddd6fe;border-radius:4px;padding:1px 4px;margin-left:5px}
 .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .toggle button{background:var(--panel);color:var(--muted);border:none;padding:6px 11px;cursor:pointer;font-size:12px}

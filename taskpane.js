@@ -5,9 +5,20 @@
 let DATA = [];
 let byCode = {};
 let BASE = 'n';
+let showGroup = true;   // incluir clientes empresa-grupo (TEG*/SUC*)
 let selected = [];
 let lastHits = [];
 let activeIdx = -1;
+
+function activeSelected(){ return showGroup ? selected : selected.filter(p=>!p.grp); }
+function toggleGroup(){
+  showGroup = !showGroup;
+  const b = document.getElementById('btn-grp');
+  b.className = 'grpbtn ' + (showGroup?'on':'off');
+  b.innerHTML = '&#128101; Cliente Emp. Grupo: ' + (showGroup?'incluidas':'excluidas');
+  if($search.value) search($search.value);
+  render(); renderChips();
+}
 
 const SHEET_NAME = "Maestro Contratos";
 const M = {contN:4,contB:5,factN:6,factB:7,pfactN:8,pfactB:9,cobN:10,cobB:11,pcfN:12,pcfB:13,pccN:14,pccB:15};
@@ -94,6 +105,7 @@ function buildModel(values, sheetName){
     const p = projects[c];
     return { c:p.c, d:p.d, cli:p.cli, cliCod:p.cliCod, pais:p.pais,
       emp:[...p.emp].sort(), pm:[...p.pm].sort(), div:[...p.div].sort(), rows:p.rows,
+      grp:/^(TEG|SUC)/i.test(p.cliCod||''),
       _idx:(p.c+' '+p.d+' '+p.cli+' '+p.cliCod).toLowerCase() };
   });
   byCode = {};
@@ -128,7 +140,10 @@ function search(q){
   if(!q){ $results.classList.remove('show'); lastHits=[]; return; }
   const terms = q.split(/\s+/);
   const hits = [];
-  for(const p of DATA){ if(terms.every(t => p._idx.indexOf(t)>=0)){ hits.push(p); if(hits.length>=200) break; } }
+  for(const p of DATA){
+    if(!showGroup && p.grp) continue;
+    if(terms.every(t => p._idx.indexOf(t)>=0)){ hits.push(p); if(hits.length>=200) break; }
+  }
   lastHits = hits;
   renderResults(hits);
 }
@@ -140,7 +155,7 @@ function renderResults(hits){
     const sel = selected.some(x=>x.c===p.c) ? ' sel' : '';
     return '<div class="item'+sel+'" data-code="'+p.c+'" data-i="'+i+'">'+
       '<div><span class="code">'+p.c+'</span> &nbsp;'+(esc(p.d)||'(sin descripcion)')+'</div>'+
-      '<div class="sub">'+(esc(p.cli)||'(sin cliente)')+' &middot; '+p.emp.length+' empresa(s) &middot; '+(p.div.join(', ')||'-')+'</div>'+
+      '<div class="sub">'+(esc(p.cli)||'(sin cliente)')+' &middot; '+p.emp.length+' empresa(s) &middot; '+(p.div.join(', ')||'-')+(p.grp?'<span class="gtag">GRUPO</span>':'')+'</div>'+
     '</div>';
   }).join('');
   $results.innerHTML = head + body;
@@ -175,8 +190,10 @@ function clearAll(){ selected=[]; render(); renderChips(); if(lastHits.length) r
 function renderChips(){
   const $c = document.getElementById('chips');
   if(!selected.length){ $c.innerHTML=''; return; }
-  $c.innerHTML = selected.map(p=>
-    '<span class="chip"><span class="cc">'+p.c+'</span> <span class="x" onclick="removeCode(\''+p.c+'\')">&times;</span></span>').join('')
+  $c.innerHTML = selected.map(p=>{
+    const off = (!showGroup && p.grp) ? ' style="opacity:.4;text-decoration:line-through"' : '';
+    return '<span class="chip"'+off+'><span class="cc">'+p.c+'</span>'+(p.grp?' &#128101;':'')+' <span class="x" onclick="removeCode(\''+p.c+'\')">&times;</span></span>';
+  }).join('')
     + '<span class="clr" onclick="clearAll()">Quitar todos ('+selected.length+')</span>';
 }
 
@@ -206,30 +223,31 @@ function fact_(l,v){ return '<div class="fact"><div class="l">'+l+'</div><div cl
 function render(){
   const $d = document.getElementById('detail');
   const es = document.getElementById('empty-state');
-  if(!selected.length){ if(es) es.style.display='block'; $d.innerHTML=''; return; }
+  const sel = activeSelected();
+  if(!sel.length){ if(es) es.style.display='block'; $d.innerHTML=''; return; }
   if(es) es.style.display='none';
 
   const ci=mi('cont'), fii=mi('fact'), pfi=mi('pfact'), coi=mi('cob'), pcfi=mi('pcf'), pcci=mi('pcc');
   const entries = [];
-  selected.forEach(p => p.rows.forEach(r => entries.push({p, r})));
-  const multi = selected.length > 1;
-  const codes = selected.map(p=>p.c);
+  sel.forEach(p => p.rows.forEach(r => entries.push({p, r})));
+  const multi = sel.length > 1;
+  const codes = sel.map(p=>p.c);
   const root = commonRoot(codes);
 
   let title, desc='';
-  if(multi){ title = selected.length+' proyectos'+(root?' &middot; raiz <span style="color:var(--accent)">'+root+'</span>':''); }
-  else { title = selected[0].c; desc = esc(selected[0].d)||'(sin descripcion)'; }
+  if(multi){ title = sel.length+' proyectos'+(root?' &middot; raiz <span style="color:var(--accent)">'+root+'</span>':''); }
+  else { title = sel[0].c; desc = esc(sel[0].d)||'(sin descripcion)'; }
 
-  const projList = selected.map(p=>'<span style="color:var(--accent2)">'+p.c+'</span> '+esc(p.d)).join('<br>');
-  const clientes = uniq(selected.map(p=>p.cli).filter(Boolean)).map(esc).join('<br>')||'&mdash;';
-  const paises = uniq(selected.map(p=>p.pais).filter(Boolean)).join(', ')||'&mdash;';
+  const projList = sel.map(p=>'<span style="color:var(--accent2)">'+p.c+'</span> '+esc(p.d)).join('<br>');
+  const clientes = uniq(sel.map(p=>p.cli).filter(Boolean)).map(esc).join('<br>')||'&mdash;';
+  const paises = uniq(sel.map(p=>p.pais).filter(Boolean)).join(', ')||'&mdash;';
   const empresas = uniq(entries.map(e=>e.r[0]).filter(Boolean)).map(esc).join('<br>')||'&mdash;';
-  const pms = uniq([].concat(...selected.map(p=>p.pm))).map(esc).join('<br>')||'&mdash;';
+  const pms = uniq([].concat(...sel.map(p=>p.pm))).map(esc).join('<br>')||'&mdash;';
   const divisas = uniq(entries.map(e=>e.r[3]).filter(Boolean)).join(', ')||'&mdash;';
 
   let html = '<div class="card head"><div class="pcode">'+title+'</div>'+
     (desc?'<div class="pdesc">'+desc+'</div>':'')+'<div class="facts">'+
-    (multi?fact_('Proyectos ('+selected.length+')', projList):'')+
+    (multi?fact_('Proyectos ('+sel.length+')', projList):'')+
     fact_('Cliente(s)', clientes)+fact_('Pais(es)', paises)+fact_('Empresa(s)', empresas)+
     fact_('Project Manager(s)', pms)+fact_('Divisa(s)', divisas)+fact_('Lineas', String(entries.length))+
     '</div></div>';

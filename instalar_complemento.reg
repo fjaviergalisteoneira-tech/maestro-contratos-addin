@@ -1,0 +1,4 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\WEF\Developer]
+"C:\\Users\\fjgalisteo\\maestro-contratos-addin\\manifest.xml"="C:\\Users\\fjgalisteo\\maestro-contratos-addin\\manifest.xml"

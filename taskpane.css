@@ -26,6 +26,15 @@ body{font-family:"Segoe UI",system-ui,Arial,sans-serif;background:var(--bg);colo
 .statusline.err{color:var(--red)}
 .statusline.ok{color:var(--green)}
 .wrap{padding:12px}
+.results .addall{position:sticky;top:0;background:#0c4a6e;color:#fff;padding:8px 10px;cursor:pointer;font-weight:600;border-bottom:1px solid var(--line)}
+.results .addall:hover{background:#155e75}
+.results .item.sel{opacity:.5}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:3px 7px 3px 10px;font-size:12px}
+.chip .cc{color:var(--accent2);font-weight:600}
+.chip .x{cursor:pointer;background:#0b1220;border-radius:50%;width:16px;height:16px;display:inline-flex;align-items:center;justify-content:center;color:var(--muted)}
+.chip .x:hover{color:var(--red)}
+.chips .clr{margin-left:auto;color:var(--muted);font-size:11px;cursor:pointer;text-decoration:underline}
 .toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .toggle{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .toggle button{background:var(--panel);color:var(--muted);border:none;padding:6px 11px;cursor:pointer;font-size:12px}

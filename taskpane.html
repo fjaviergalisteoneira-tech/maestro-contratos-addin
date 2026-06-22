@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maestro de Contratos</title>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<link rel="stylesheet" href="taskpane.css">
+</head>
+<body>
+  <div class="topbar">
+    <h1>Maestro de Contratos</h1>
+    <div class="row">
+      <div class="searchbar">
+        <input id="search" type="text" autocomplete="off" spellcheck="false"
+               placeholder="Buscar por codigo, descripcion o cliente..." disabled>
+        <div id="results" class="results"></div>
+      </div>
+      <button id="reload" class="iconbtn" title="Recargar datos del libro" onclick="loadData()">&#8635;</button>
+    </div>
+  </div>
+
+  <div id="status" class="statusline">Inicializando&hellip;</div>
+
+  <div class="wrap">
+    <div class="toolbar">
+      <div class="toggle">
+        <button id="btn-neto" class="on" onclick="setBase('n')">Neto</button>
+        <button id="btn-bruto" onclick="setBase('b')">Bruto</button>
+      </div>
+      <span class="hint">Sin IVA / con IVA. Importe en divisa del contrato.</span>
+    </div>
+
+    <div id="empty-state">
+      <div class="big">&#128269;</div>
+      <div>Busca un proyecto arriba.</div>
+      <div id="empty-count" style="margin-top:6px;font-size:11px"></div>
+    </div>
+
+    <div id="detail"></div>
+  </div>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>

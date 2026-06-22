@@ -72,5 +72,8 @@ th.l,td.l{text-align:left}
 thead th{color:var(--muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.3px}
 tbody tr:hover{background:#33415540}
 .num-neg{color:var(--red)}
+table.det thead th{background:var(--panel);border-left:1px solid var(--line)}
+table.det thead tr:first-child th{top:0;text-align:center;color:var(--accent2)}
+table.det thead tr:last-child th{top:22px;font-size:9px}
 .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:6px}
 @keyframes spin{to{transform:rotate(360deg)}}

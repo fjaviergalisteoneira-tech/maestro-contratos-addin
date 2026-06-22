@@ -266,20 +266,23 @@ function render(){
       '</div></div>';
   }
 
-  html += '<div class="card"><h3 style="margin:0 0 6px;font-size:12px;color:var(--accent2)">Detalle por origen</h3>'+
-    '<div class="tablewrap"><table><thead><tr>'+
-    '<th class="l">Proy.</th><th class="l">Empresa</th><th class="l">Origen</th><th class="l">Estado</th><th class="l">Div</th>'+
-    '<th>Contrato</th><th>Facturado</th><th>% Ej.</th><th>Pdte fact</th><th>Cobrado</th><th>Pdte s/fact</th><th>Pdte s/contr</th>'+
-    '</tr></thead><tbody>';
+  const td = (v)=>'<td class="'+negCls(v)+'">'+fmt(v)+'</td>';
+  const pct = (n,d)=> d!==0 ? new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(n/d*100)+'%' : '&mdash;';
+  html += '<div class="card"><h3 style="margin:0 0 6px;font-size:12px;color:var(--accent2)">Detalle por origen &mdash; todas las columnas (Neto y Bruto)</h3>'+
+    '<div class="tablewrap"><table class="det"><thead>'+
+    '<tr><th class="l" rowspan="2">Proy.</th><th class="l" rowspan="2">Empresa</th><th class="l" rowspan="2">Origen</th>'+
+    '<th class="l" rowspan="2">Estado</th><th class="l" rowspan="2">Div</th>'+
+    '<th colspan="2">Contrato</th><th colspan="2">Facturado</th><th colspan="2">% Ejec</th>'+
+    '<th colspan="2">Pdte facturar</th><th colspan="2">Cobrado</th><th colspan="2">Pdte cobro s/fact</th><th colspan="2">Pdte cobro s/contrato</th></tr>'+
+    '<tr><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th><th>Neto</th><th>Bruto</th></tr>'+
+    '</thead><tbody>';
   const ord = entries.slice().sort((a,b)=> (a.p.c+a.r[3]+a.r[1]).localeCompare(b.p.c+b.r[3]+b.r[1]));
   for(const e of ord){
-    const r=e.r, c=r[ci], f=r[fii], ej=c!==0?f/c:null;
-    const ejt = ej===null?'&mdash;':new Intl.NumberFormat('es-ES',{maximumFractionDigits:1}).format(ej*100)+'%';
+    const r=e.r;
     html += '<tr><td class="l" style="color:var(--accent2)">'+e.p.c+'</td>'+
       '<td class="l">'+esc(r[0])+'</td><td class="l">'+esc(r[1])+'</td><td class="l">'+stateBadge(r[2])+'</td><td class="l">'+r[3]+'</td>'+
-      '<td class="'+negCls(c)+'">'+fmt(c)+'</td><td class="'+negCls(f)+'">'+fmt(f)+'</td><td>'+ejt+'</td>'+
-      '<td class="'+negCls(r[pfi])+'">'+fmt(r[pfi])+'</td><td class="'+negCls(r[coi])+'">'+fmt(r[coi])+'</td>'+
-      '<td class="'+negCls(r[pcfi])+'">'+fmt(r[pcfi])+'</td><td class="'+negCls(r[pcci])+'">'+fmt(r[pcci])+'</td></tr>';
+      td(r[4])+td(r[5])+td(r[6])+td(r[7])+'<td>'+pct(r[6],r[4])+'</td><td>'+pct(r[7],r[5])+'</td>'+
+      td(r[8])+td(r[9])+td(r[10])+td(r[11])+td(r[12])+td(r[13])+td(r[14])+td(r[15])+'</tr>';
   }
   html += '</tbody></table></div></div>';
   $d.innerHTML = html;
